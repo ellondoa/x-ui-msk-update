@@ -119,12 +119,8 @@ install_x-ui() {
 
     last_version=$(curl -sm8 https://gitlab.com/Misaka-blog/x-ui-msk/-/raw/main/config/version)
     url="https://gitlab.com/Misaka-blog/x-ui-msk/-/raw/main/x-ui-linux-${arch}.tar.gz"
-    echo -e "开始安装 x-ui v$1"
+    echo -e "开始安装 x-ui v$last_version"
     wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}.tar.gz ${url}
-    if [[ $? -ne 0 ]]; then
-        echo -e "${red}下载 x-ui v$1 失败，请确保此版本存在${plain}"
-        exit 1
-    fi
 
     if [[ -e /usr/local/x-ui/ ]]; then
         rm /usr/local/x-ui/ -rf
