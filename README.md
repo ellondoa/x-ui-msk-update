@@ -17,7 +17,7 @@
 # 安装&升级
 
 ```
-bash <(curl -Ls https://gitlab.com/Misaka-blog/x-ui-msk/-/raw/main/install.sh)
+bash <(wget -qO- https://gitlab.com/Misaka-blog/x-ui-msk/-/raw/main/install.sh)
 ```
 
 ## 手动安装&升级
