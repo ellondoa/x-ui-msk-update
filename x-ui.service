@@ -1,6 +1,6 @@
 [Unit]
-Description=x-ui Service
-Documentation=https://github.com/Misaka-blog/x-ui-msk
+Description=x-ui-msk Service
+Documentation=https://gitlab.com/Misaka-blog/x-ui-msk
 After=network.target
 Wants=network.target
 
