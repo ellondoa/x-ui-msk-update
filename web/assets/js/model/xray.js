@@ -44,8 +44,6 @@ const RULE_DOMAIN = {
 };
 
 const FLOW_CONTROL = {
-    ORIGIN: "xtls-rprx-origin",
-    DIRECT: "xtls-rprx-direct",
     VISION: "xtls-rprx-vision",
 };
 
@@ -642,7 +640,11 @@ class Inbound extends XrayCommonClass {
         if (isTls) {
             this.stream.security = 'tls';
         } else {
-            this.stream.security = 'none';
+            if (this.protocol === Protocols.TROJAN) {
+                this.xtls = true;
+            } else {
+                this.stream.security = 'none';
+            }
         }
     }
 
@@ -654,7 +656,11 @@ class Inbound extends XrayCommonClass {
         if (isXTls) {
             this.stream.security = 'xtls';
         } else {
-            this.stream.security = 'none';
+            if (this.protocol === Protocols.TROJAN) {
+                this.tls = true;
+            } else {
+                this.stream.security = 'none';
+            }
         }
     }
 
@@ -1011,8 +1017,8 @@ class Inbound extends XrayCommonClass {
                 params.set("sni", address);
             }
         }
-
-        if (this.xtls) {
+        
+        if (this.tls) {
             params.set("flow", this.settings.vlesses[0].flow);
         }
 
@@ -1100,9 +1106,11 @@ class Inbound extends XrayCommonClass {
                 params.set("sni", address);
             }
         }
-        if (this.xtls) {
+        
+       if (this.tls) {
             params.set("flow", this.settings.clients[0].flow);
         }
+        
         const link = `trojan://${settings.clients[0].password}@${address}:${port}`;
         const url = new URL(link);
         for (const [key, value] of params) {
@@ -1284,7 +1292,6 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
     }
 };
 Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
-
     constructor(id = RandomUtil.randomUUID(), flow = FLOW_CONTROL.VISION) {
         super();
         this.id = id;
