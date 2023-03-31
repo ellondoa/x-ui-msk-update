@@ -496,10 +496,45 @@ TlsStreamSettings.Cert = class extends XrayCommonClass {
     }
 };
 
+class RealityStreamSettings extends XrayCommonClass {
+    constructor(show = false, dest = '', alpn = '', path = '', xver = 0) {
+        super();
+        this.show = show;
+        this.dest = dest;
+        this.xver = xver;
+        this.alpn = alpn;
+        this.path = path;                
+    }
+
+    toJson() {
+        let xver = this.xver;
+        if (!Number.isInteger(xver)) {
+            xver = 0;
+        }
+        show = false
+        return {
+            show: this.show,
+            dest: this.dest,
+            xver: xver,
+            alpn: this.alpn,
+            path: this.path,            
+        }
+    }
+
+    static fromJson() {
+        return {
+            show: this.show,
+            dest: this.dest,
+            xver: this.xver,
+        };
+    }
+};
+
 class StreamSettings extends XrayCommonClass {
     constructor(network = 'tcp',
         security = 'none',
         tlsSettings = new TlsStreamSettings(),
+        realitySettings = new RealityStreamSettings(),
         tcpSettings = new TcpStreamSettings(),
         kcpSettings = new KcpStreamSettings(),
         wsSettings = new WsStreamSettings(),
@@ -511,6 +546,7 @@ class StreamSettings extends XrayCommonClass {
         this.network = network;
         this.security = security;
         this.tls = tlsSettings;
+        this.reality = realitySettings;
         this.tcp = tcpSettings;
         this.kcp = kcpSettings;
         this.ws = wsSettings;
@@ -560,7 +596,7 @@ class StreamSettings extends XrayCommonClass {
         if (json.security === "xtls") {
             tls = TlsStreamSettings.fromJson(json.xtlsSettings);
         } else if(json.security === "reality") {
-            tls = TlsStreamSettings.fromJson(json.xtlsSettings);
+            tls = TlsStreamSettings.fromJson(json.realitySettings);
         } else {
             tls = TlsStreamSettings.fromJson(json.tlsSettings);
         }
@@ -584,6 +620,7 @@ class StreamSettings extends XrayCommonClass {
             security: this.security,
             tlsSettings: this.isTls ? this.tls.toJson() : undefined,
             xtlsSettings: this.isXTls ? this.tls.toJson() : undefined,
+            realitySettings: this.isReality ? this.tls.toJson() : undefined,
             tcpSettings: network === 'tcp' ? this.tcp.toJson() : undefined,
             kcpSettings: network === 'kcp' ? this.kcp.toJson() : undefined,
             wsSettings: network === 'ws' ? this.ws.toJson() : undefined,
