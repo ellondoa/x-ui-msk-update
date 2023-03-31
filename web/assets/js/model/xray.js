@@ -112,7 +112,7 @@ class XrayCommonClass {
 }
 
 class TcpStreamSettings extends XrayCommonClass {
-    constructor(acceptProxyProtocol=false,
+    constructor(acceptProxyProtocol = false,
         type = 'none',
         request = new TcpStreamSettings.TcpRequest(),
         response = new TcpStreamSettings.TcpResponse(),
@@ -298,7 +298,7 @@ class KcpStreamSettings extends XrayCommonClass {
 }
 
 class WsStreamSettings extends XrayCommonClass {
-    constructor(acceptProxyProtocol=false, path = '/', headers = []) {
+    constructor(acceptProxyProtocol = false, path = '/', headers = []) {
         super();
         this.acceptProxyProtocol = acceptProxyProtocol;
         this.path = path;
@@ -419,7 +419,7 @@ class GrpcStreamSettings extends XrayCommonClass {
 
 class TlsStreamSettings extends XrayCommonClass {
     constructor(serverName = '',
-        certificates = [new TlsStreamSettings.Cert()], alpn="") {
+        certificates = [new TlsStreamSettings.Cert()], alpn = "") {
         super();
         this.server = serverName;
         this.certs = certificates;
@@ -535,6 +535,10 @@ class StreamSettings extends XrayCommonClass {
         return this.security === "xtls";
     }
 
+    get isReality() {
+        return this.security === "reality";
+    }
+
     set isXTls(isXTls) {
         if (isXTls) {
             this.security = 'xtls';
@@ -543,9 +547,19 @@ class StreamSettings extends XrayCommonClass {
         }
     }
 
+    set isReality(isReality) {
+        if (isReality) {
+            this.security = 'reality';
+        } else {
+            this.security = 'none';
+        }
+    }
+
     static fromJson(json = {}) {
         let tls;
         if (json.security === "xtls") {
+            tls = TlsStreamSettings.fromJson(json.xtlsSettings);
+        } else if(json.security === "reality") {
             tls = TlsStreamSettings.fromJson(json.xtlsSettings);
         } else {
             tls = TlsStreamSettings.fromJson(json.tlsSettings);
@@ -652,9 +666,25 @@ class Inbound extends XrayCommonClass {
         return this.stream.security === 'xtls';
     }
 
+    get reality() {
+        return this.stream.security === 'reality';
+    }
+
     set xtls(isXTls) {
         if (isXTls) {
             this.stream.security = 'xtls';
+        } else {
+            if (this.protocol === Protocols.TROJAN) {
+                this.tls = true;
+            } else {
+                this.stream.security = 'none';
+            }
+        }
+    }
+
+    set reality(isReality) {
+        if (isReality) {
+            this.stream.security = 'reality';
         } else {
             if (this.protocol === Protocols.TROJAN) {
                 this.tls = true;
@@ -842,6 +872,26 @@ class Inbound extends XrayCommonClass {
         }
     }
 
+    canEnableReality() {
+        switch (this.protocol) {
+            case Protocols.VLESS:
+                break;
+            default:
+                return false;
+        }
+
+        switch (this.network) {
+            case "tcp":
+            case "ws":
+            case "http":
+            case "quic":
+            case "grpc":
+                return true;
+            default:
+                return false;
+        }
+    }
+
     canSetTls() {
         return this.canEnableTls();
     }
@@ -862,7 +912,7 @@ class Inbound extends XrayCommonClass {
             case Protocols.VMESS:
             case Protocols.VLESS:
             case Protocols.SHADOWSOCKS:
-            case Protocols.TROJAN:    
+            case Protocols.TROJAN:
                 return true;
             default:
                 return false;
@@ -1017,7 +1067,7 @@ class Inbound extends XrayCommonClass {
                 params.set("sni", address);
             }
         }
-        
+
         if (this.tls) {
             params.set("flow", this.settings.vlesses[0].flow);
         }
@@ -1106,11 +1156,11 @@ class Inbound extends XrayCommonClass {
                 params.set("sni", address);
             }
         }
-        
-       if (this.tls) {
+
+        if (this.tls) {
             params.set("flow", this.settings.clients[0].flow);
         }
-        
+
         const link = `trojan://${settings.clients[0].password}@${address}:${port}`;
         const url = new URL(link);
         for (const [key, value] of params) {
