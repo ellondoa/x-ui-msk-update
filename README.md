@@ -1,6 +1,6 @@
 # x-ui
 
-支持多协议多用户的 xray 面板
+支持多协议、多用户的 xray 面板
 
 # 功能介绍
 
@@ -14,13 +14,13 @@
 - 支持一键SSL证书申请且自动续签
 - 更多高级配置项，详见面板
 
-# 安装&升级
+# 安装 & 升级
 
 ```
 bash <(wget -qO- https://gitlab.com/Misaka-blog/x-ui-msk/-/raw/main/install.sh)
 ```
 
-## 手动安装&升级
+## 手动安装 & 升级
 
 1. 首先从项目中下载最新的压缩包，一般选择 `amd64`架构
 2. 然后将这个压缩包上传到服务器的 `/root/`目录下，并使用 `root`用户登录服务器
@@ -91,11 +91,11 @@ docker build -t x-ui .
 - 证书安装目录为/root/cert目录
 - 本脚本申请证书均为泛域名证书
 
-## Tg机器人使用
+## TG机器人使用
 
 > 此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供
 
-X-UI支持通过Tg机器人实现每日流量通知，面板登录提醒等功能，使用Tg机器人，需要自行申请
+X-UI支持通过TG机器人实现每日流量通知，面板登录提醒等功能，使用Tg机器人，需要自行申请
 具体申请教程可以参考[博客链接](https://coderfan.net/how-to-use-telegram-bot-to-alarm-you-when-someone-login-into-your-vps.html)
 使用说明:在面板后台设置机器人相关参数，具体包括
 
