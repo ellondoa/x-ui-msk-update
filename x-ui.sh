@@ -1,21 +1,33 @@
 #!/bin/bash
 
-red='\033[0;31m'
-green='\033[0;32m'
-yellow='\033[0;33m'
-plain='\033[0m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+PLAIN='\033[0m'
+
+red() {
+    echo -e "\033[31m\033[01m$1\033[0m"
+}
+
+green() {
+    echo -e "\033[32m\033[01m$1\033[0m"
+}
+
+yellow() {
+    echo -e "\033[33m\033[01m$1\033[0m"
+}
 
 #Add some basic function here
 function LOGD() {
-    echo -e "${yellow}[DEG] $* ${plain}"
+    echo -e "${YELLOW}[DEG] $* ${PLAIN}"
 }
 
 function LOGE() {
-    echo -e "${red}[ERR] $* ${plain}"
+    echo -e "${RED}[ERR] $* ${PLAIN}"
 }
 
 function LOGI() {
-    echo -e "${green}[INF] $* ${plain}"
+    echo -e "${GREEN}[INF] $* ${PLAIN}"
 }
 # check root
 [[ $EUID -ne 0 ]] && LOGE "错误:  必须使用root用户运行此脚本!\n" && exit 1
@@ -89,7 +101,7 @@ confirm_restart() {
 }
 
 before_show_menu() {
-    echo && echo -n -e "${yellow}按回车返回主菜单: ${plain}" && read temp
+    echo && echo -n -e "${YELLOW}按回车返回主菜单: ${PLAIN}" && read temp
     show_menu
 }
 
@@ -137,7 +149,7 @@ uninstall() {
     rm /usr/local/x-ui/ -rf
     
     echo ""
-    echo -e "卸载成功，如果你想删除此脚本，则退出脚本后运行 ${green}rm /usr/bin/x-ui -f${plain} 进行删除"
+    echo -e "卸载成功，如果你想删除此脚本，则退出脚本后运行 ${GREEN}rm /usr/bin/x-ui -f${PLAIN} 进行删除"
     echo ""
     
     if [[ $# == 0 ]]; then
@@ -154,7 +166,7 @@ reset_user() {
         return 0
     fi
     /usr/local/x-ui/x-ui setting -username admin -password admin
-    echo -e "用户名和密码已重置为 ${green}admin${plain}，现在请重启面板"
+    echo -e "用户名和密码已重置为 ${GREEN}admin${PLAIN}，现在请重启面板"
     confirm_restart
 }
 
@@ -167,7 +179,7 @@ reset_config() {
         return 0
     fi
     /usr/local/x-ui/x-ui setting -reset
-    echo -e "所有面板设置已重置为默认值，现在请重启面板，并使用默认的 ${green}54321${plain} 端口访问面板"
+    echo -e "所有面板设置已重置为默认值，现在请重启面板，并使用默认的 ${GREEN}54321${PLAIN} 端口访问面板"
     confirm_restart
 }
 
@@ -187,7 +199,7 @@ set_port() {
         before_show_menu
     else
         /usr/local/x-ui/x-ui setting -port ${port}
-        echo -e "设置端口完毕，现在请重启面板，并使用新设置的端口 ${green}${port}${plain} 访问面板"
+        echo -e "设置端口完毕，现在请重启面板，并使用新设置的端口 ${GREEN}${port}${PLAIN} 访问面板"
         confirm_restart
     fi
 }
@@ -367,15 +379,15 @@ show_status() {
     check_status
     case $? in
         0)
-            echo -e "面板状态: ${green}已运行${plain}"
+            echo -e "面板状态: ${GREEN}已运行${PLAIN}"
             show_enable_status
         ;;
         1)
-            echo -e "面板状态: ${yellow}未运行${plain}"
+            echo -e "面板状态: ${YELLOW}未运行${PLAIN}"
             show_enable_status
         ;;
         2)
-            echo -e "面板状态: ${red}未安装${plain}"
+            echo -e "面板状态: ${RED}未安装${PLAIN}"
         ;;
     esac
     show_xray_status
@@ -384,9 +396,9 @@ show_status() {
 show_enable_status() {
     check_enabled
     if [[ $? == 0 ]]; then
-        echo -e "是否开机自启: ${green}是${plain}"
+        echo -e "是否开机自启: ${GREEN}是${PLAIN}"
     else
-        echo -e "是否开机自启: ${red}否${plain}"
+        echo -e "是否开机自启: ${RED}否${PLAIN}"
     fi
 }
 
@@ -402,9 +414,9 @@ check_xray_status() {
 show_xray_status() {
     check_xray_status
     if [[ $? == 0 ]]; then
-        echo -e "xray 状态: ${green}运行${plain}"
+        echo -e "xray 状态: ${GREEN}运行${PLAIN}"
     else
-        echo -e "xray 状态: ${red}未运行${plain}"
+        echo -e "xray 状态: ${RED}未运行${PLAIN}"
     fi
 }
 
@@ -421,7 +433,7 @@ open_ports(){
     iptables -F 2>/dev/null
     iptables -X 2>/dev/null
     netfilter-persistent save 2>/dev/null
-    LOGI "所有端口已放行成功！"
+    green "所有端口已放行成功！"
 }
 
 ssl_cert_issue() {
@@ -440,7 +452,15 @@ x25519() {
         arch="amd64"
     fi
     
-    /usr/local/x-ui/bin/xray-linux-${arch} x25519
+    keys=$(/usr/local/x-ui/bin/xray-linux-${arch} x25519)
+    public_key=$(echo $keys | awk -F " " '{print $6}')
+    private_key=$(echo $keys | awk -F " " '{print $6}')
+    short_id=$(openssl rand -hex 8)
+    green "xray Reality 的公私钥、shortId 已生成成功！"
+    yellow "请将此内容保存备用，以便创建Reality 节点使用"
+    red "公钥：$public_key"
+    red "私钥：$private_key"
+    red "shortId：$short_id"
     echo ""
     before_show_menu
 }
@@ -465,31 +485,31 @@ show_usage() {
 
 show_menu() {
     echo -e "
-  ${green}x-ui 面板管理脚本${plain}
-  ${green}0.${plain} 退出脚本
+  ${GREEN}x-ui 面板管理脚本${PLAIN}
+  ${GREEN}0.${PLAIN} 退出脚本
 ————————————————
-  ${green}1.${plain} 安装 x-ui
-  ${green}2.${plain} 更新 x-ui
-  ${green}3.${plain} 卸载 x-ui
+  ${GREEN}1.${PLAIN} 安装 x-ui
+  ${GREEN}2.${PLAIN} 更新 x-ui
+  ${GREEN}3.${PLAIN} 卸载 x-ui
 ————————————————
-  ${green}4.${plain} 重置用户名密码
-  ${green}5.${plain} 重置面板设置
-  ${green}6.${plain} 设置面板端口
-  ${green}7.${plain} 查看当前面板设置
+  ${GREEN}4.${PLAIN} 重置用户名密码
+  ${GREEN}5.${PLAIN} 重置面板设置
+  ${GREEN}6.${PLAIN} 设置面板端口
+  ${GREEN}7.${PLAIN} 查看当前面板设置
 ————————————————
-  ${green}8.${plain} 启动 x-ui
-  ${green}9.${plain} 停止 x-ui
-  ${green}10.${plain} 重启 x-ui
-  ${green}11.${plain} 查看 x-ui 状态
-  ${green}12.${plain} 查看 x-ui 日志
+  ${GREEN}8.${PLAIN} 启动 x-ui
+  ${GREEN}9.${PLAIN} 停止 x-ui
+  ${GREEN}10.${PLAIN} 重启 x-ui
+  ${GREEN}11.${PLAIN} 查看 x-ui 状态
+  ${GREEN}12.${PLAIN} 查看 x-ui 日志
 ————————————————
-  ${green}13.${plain} 设置 x-ui 开机自启
-  ${green}14.${plain} 取消 x-ui 开机自启
+  ${GREEN}13.${PLAIN} 设置 x-ui 开机自启
+  ${GREEN}14.${PLAIN} 取消 x-ui 开机自启
 ————————————————
-  ${green}15.${plain} 一键安装 bbr (最新内核)
-  ${green}16.${plain} 一键申请 SSL 证书(acme申请)
-  ${green}17.${plain} 一键放开所有网络端口
-  ${green}18.${plain} REALITY x25519 生成
+  ${GREEN}15.${PLAIN} 一键安装 bbr (最新内核)
+  ${GREEN}16.${PLAIN} 一键申请 SSL 证书(acme申请)
+  ${GREEN}17.${PLAIN} 一键放开所有网络端口
+  ${GREEN}18.${PLAIN} REALITY 公私钥及 shortId 生成
     "
     show_status
     echo && read -p "请输入选择 [0-18]: " num
