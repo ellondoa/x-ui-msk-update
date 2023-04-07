@@ -108,8 +108,8 @@ config_after_install() {
         /usr/local/x-ui/x-ui setting -port ${config_port}
         echo -e "${yellow}面板端口设定完成${plain}"
     else
-        config_port=54321
-        echo -e "${red}已取消,所有设置项均为默认设置,请及时修改${plain}"
+        config_port=$(/usr/local/x-ui/x-ui setting -show | sed -n 4p | awk -F ": " '{print $2}')
+        echo -e "${red}已取消, 所有设置项均为默认设置, 请及时修改${plain}"
     fi
 }
 
