@@ -23,17 +23,17 @@ function LOGI() {
 # check os
 if [[ -f /etc/redhat-release ]]; then
     release="centos"
-elif cat /etc/issue | grep -Eqi "debian"; then
+    elif cat /etc/issue | grep -Eqi "debian"; then
     release="debian"
-elif cat /etc/issue | grep -Eqi "ubuntu"; then
+    elif cat /etc/issue | grep -Eqi "ubuntu"; then
     release="ubuntu"
-elif cat /etc/issue | grep -Eqi "centos|red hat|redhat"; then
+    elif cat /etc/issue | grep -Eqi "centos|red hat|redhat"; then
     release="centos"
-elif cat /proc/version | grep -Eqi "debian"; then
+    elif cat /proc/version | grep -Eqi "debian"; then
     release="debian"
-elif cat /proc/version | grep -Eqi "ubuntu"; then
+    elif cat /proc/version | grep -Eqi "ubuntu"; then
     release="ubuntu"
-elif cat /proc/version | grep -Eqi "centos|red hat|redhat"; then
+    elif cat /proc/version | grep -Eqi "centos|red hat|redhat"; then
     release="centos"
 else
     LOGE "未检测到系统版本，请联系脚本作者！\n" && exit 1
@@ -53,11 +53,11 @@ if [[ x"${release}" == x"centos" ]]; then
     if [[ ${os_version} -le 6 ]]; then
         LOGE "请使用 CentOS 7 或更高版本的系统！\n" && exit 1
     fi
-elif [[ x"${release}" == x"ubuntu" ]]; then
+    elif [[ x"${release}" == x"ubuntu" ]]; then
     if [[ ${os_version} -lt 16 ]]; then
         LOGE "请使用 Ubuntu 16 或更高版本的系统！\n" && exit 1
     fi
-elif [[ x"${release}" == x"debian" ]]; then
+    elif [[ x"${release}" == x"debian" ]]; then
     if [[ ${os_version} -lt 8 ]]; then
         LOGE "请使用 Debian 8 或更高版本的系统！\n" && exit 1
     fi
@@ -135,11 +135,11 @@ uninstall() {
     systemctl reset-failed
     rm /etc/x-ui/ -rf
     rm /usr/local/x-ui/ -rf
-
+    
     echo ""
     echo -e "卸载成功，如果你想删除此脚本，则退出脚本后运行 ${green}rm /usr/bin/x-ui -f${plain} 进行删除"
     echo ""
-
+    
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
@@ -207,7 +207,7 @@ start() {
             LOGE "面板启动失败，可能是因为启动时间超过了两秒，请稍后查看日志信息"
         fi
     fi
-
+    
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
@@ -228,7 +228,7 @@ stop() {
             LOGE "面板停止失败，可能是因为停止时间超过了两秒，请稍后查看日志信息"
         fi
     fi
-
+    
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
@@ -262,7 +262,7 @@ enable() {
     else
         LOGE "x-ui 设置开机自启失败"
     fi
-
+    
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
@@ -275,7 +275,7 @@ disable() {
     else
         LOGE "x-ui 取消开机自启失败"
     fi
-
+    
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
@@ -290,7 +290,7 @@ show_log() {
 
 migrate_v2_ui() {
     /usr/local/x-ui/x-ui v2-ui
-
+    
     before_show_menu
 }
 
@@ -366,16 +366,16 @@ check_install() {
 show_status() {
     check_status
     case $? in
-    0)
-        echo -e "面板状态: ${green}已运行${plain}"
-        show_enable_status
+        0)
+            echo -e "面板状态: ${green}已运行${plain}"
+            show_enable_status
         ;;
-    1)
-        echo -e "面板状态: ${yellow}未运行${plain}"
-        show_enable_status
+        1)
+            echo -e "面板状态: ${yellow}未运行${plain}"
+            show_enable_status
         ;;
-    2)
-        echo -e "面板状态: ${red}未安装${plain}"
+        2)
+            echo -e "面板状态: ${red}未安装${plain}"
         ;;
     esac
     show_xray_status
@@ -428,6 +428,23 @@ ssl_cert_issue() {
     wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/acme-script/main/acme.sh && bash acme.sh
 }
 
+x25519() {
+    arch=$(arch)
+    if [[ $arch == "x86_64" || $arch == "x64" || $arch == "amd64" ]]; then
+        arch="amd64"
+    elif [[ $arch == "aarch64" || $arch == "arm64" ]]; then
+        arch="arm64"
+    elif [[ $arch == "s390x" ]]; then
+        arch="s390x"
+    else
+        arch="amd64"
+    fi
+    
+    /usr/local/xray-ui/bin/xray-linux-${arch} x25519
+    echo ""
+    before_show_menu
+}
+
 show_usage() {
     echo "x-ui 管理脚本使用方法: "
     echo "------------------------------------------"
@@ -472,107 +489,111 @@ show_menu() {
   ${green}15.${plain} 一键安装 bbr (最新内核)
   ${green}16.${plain} 一键申请 SSL 证书(acme申请)
   ${green}17.${plain} 一键放开所有网络端口
- "
+  ${green}18.${plain} REALITY x25519 生成
+    "
     show_status
-    echo && read -p "请输入选择 [0-17]: " num
-
+    echo && read -p "请输入选择 [0-18]: " num
+    
     case "${num}" in
-    0)
-        exit 0
+        0)
+            exit 0
         ;;
-    1)
-        check_uninstall && install
+        1)
+            check_uninstall && install
         ;;
-    2)
-        check_install && update
+        2)
+            check_install && update
         ;;
-    3)
-        check_install && uninstall
+        3)
+            check_install && uninstall
         ;;
-    4)
-        check_install && reset_user
+        4)
+            check_install && reset_user
         ;;
-    5)
-        check_install && reset_config
+        5)
+            check_install && reset_config
         ;;
-    6)
-        check_install && set_port
+        6)
+            check_install && set_port
         ;;
-    7)
-        check_install && check_config
+        7)
+            check_install && check_config
         ;;
-    8)
-        check_install && start
+        8)
+            check_install && start
         ;;
-    9)
-        check_install && stop
+        9)
+            check_install && stop
         ;;
-    10)
-        check_install && restart
+        10)
+            check_install && restart
         ;;
-    11)
-        check_install && status
+        11)
+            check_install && status
         ;;
-    12)
-        check_install && show_log
+        12)
+            check_install && show_log
         ;;
-    13)
-        check_install && enable
+        13)
+            check_install && enable
         ;;
-    14)
-        check_install && disable
+        14)
+            check_install && disable
         ;;
-    15)
-        install_bbr
+        15)
+            install_bbr
         ;;
-    16)
-        ssl_cert_issue
+        16)
+            ssl_cert_issue
         ;;
-    17)
-        open_ports
+        17)
+            open_ports
         ;;
-    *)
-        LOGE "请输入正确的数字 [0-16]"
+        18) 
+            x25519
+        ;;
+        *)
+            LOGE "请输入正确的数字 [0-18]"
         ;;
     esac
 }
 
 if [[ $# > 0 ]]; then
     case $1 in
-    "start")
-        check_install 0 && start 0
+        "start")
+            check_install 0 && start 0
         ;;
-    "stop")
-        check_install 0 && stop 0
+        "stop")
+            check_install 0 && stop 0
         ;;
-    "restart")
-        check_install 0 && restart 0
+        "restart")
+            check_install 0 && restart 0
         ;;
-    "status")
-        check_install 0 && status 0
+        "status")
+            check_install 0 && status 0
         ;;
-    "enable")
-        check_install 0 && enable 0
+        "enable")
+            check_install 0 && enable 0
         ;;
-    "disable")
-        check_install 0 && disable 0
+        "disable")
+            check_install 0 && disable 0
         ;;
-    "log")
-        check_install 0 && show_log 0
+        "log")
+            check_install 0 && show_log 0
         ;;
-    "v2-ui")
-        check_install 0 && migrate_v2_ui 0
+        "v2-ui")
+            check_install 0 && migrate_v2_ui 0
         ;;
-    "update")
-        check_install 0 && update 0
+        "update")
+            check_install 0 && update 0
         ;;
-    "install")
-        check_uninstall 0 && install 0
+        "install")
+            check_uninstall 0 && install 0
         ;;
-    "uninstall")
-        check_install 0 && uninstall 0
+        "uninstall")
+            check_install 0 && uninstall 0
         ;;
-    *) show_usage ;;
+        *) show_usage ;;
     esac
 else
     show_menu
