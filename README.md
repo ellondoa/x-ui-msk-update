@@ -1,171 +1,151 @@
-本项目基于上游X-UI项目进行略微的功能改动！后续将紧跟上游X-UI版本更新！在此感谢[vaxilu](https://github.com/vaxilu/x-ui)、[FranzKafkaYu](https://github.com/FranzKafkaYu/x-ui)及各位为此项目做出贡献
+# x-ui
 
-----------------------------------------------------------------------------------------------------------------------------------------------
-### 功能介绍
+支持多协议多用户的 xray 面板
 
-系统状态监控
-支持多用户多协议，网页可视化操作
-支持的协议：vmess、vless、trojan、shadowsocks、dokodemo-door、socks、http
-支持配置更多传输配置
-流量统计，限制流量，限制到期时间
-可自定义 xray 配置模板
-支持 https 访问面板（自备域名 + ssl 证书）
-更多高级配置项，详见面板
+# 功能介绍
 
-----------------------------------------------------------------------------------------------------------------------------------------------
+- 系统状态监控
+- 支持多用户多协议，网页可视化操作
+- 支持的协议：vmess、vless、trojan、shadowsocks、dokodemo-door、socks、http
+- 支持配置更多传输配置
+- 流量统计，限制流量，限制到期时间
+- 可自定义 xray 配置模板
+- 支持 https 访问面板（自备域名 + ssl 证书）
+- 支持一键SSL证书申请且自动续签
+- 更多高级配置项，详见面板
 
-本脚本显示功能更加人性化！已解决各种新老系统安装失败问题，并会长期更新，欢迎大家提建议！！
-    
-
-更新日志：
-
-2023.4.7 添加 x-ui x25519 生成REALITY公私钥 ！
-
-[x-ui 面板配置 reality](./reality.md)
-
-2023.3.13 添加reality 支持 !
-
-* [reality 配置参考](./media/reality.png)
-
-2023.3.10 删除旧版XTLS配置以便支持xray1.8.0版本 旧trojan配置请关闭然后打开编辑从新保存即可正常，旧VLESS配置可能需要删除重新创建xray才能启动成功
-
-2023.1.7 添加VLESS-TCP-XTLS-Vision 支持
-
-2022.10.19 更新xray时不更新geoip.dat geosite.dat . geoip.dat geosite.dat 使用[Loyalsoldier](https://github.com/Loyalsoldier/geoip)提供版本单独更新
-
-2022.10.17 更改trojan 可以关闭tls配置可以使用nginx 对外代理
-
--------------------------------------------------------------------------------------------------------------------------------------------------
-### 手动安装
+# 安装&升级
 
 ```
-# 下载 
-wget -N --no-check-certificate -O /usr/local/x-ui-linux-amd64.tar.gz https://github.com/qist/x-ui/releases/latest/download/x-ui-linux-amd64.tar.gz
-
-# 解压
-    cd /usr/local/
-    tar -xvf x-ui-linux-amd64.tar.gz
-    rm x-ui-linux-amd64.tar.gz -f
-    cd x-ui
-    chmod +x x-ui bin/xray-linux-amd64
-    cp -f x-ui.service /etc/systemd/system/
-    wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/qist/x-ui/main/x-ui.sh
-    chmod +x /usr/bin/x-ui
-    systemctl daemon-reload
-    systemctl enable x-ui
-    systemctl start x-ui
-    # 设置账号密码：
-    /usr/local/x-ui/x-ui setting -username admin -password admin123
-    # 设置端口
-   /usr/local/x-ui/x-ui setting -port  5432
+bash <(wget -qO- https://gitlab.com/Misaka-blog/x-ui-msk/-/raw/main/install.sh)
 ```
 
-### VPS直接运行一键脚本
+## 手动安装&升级
+
+1. 首先从项目中下载最新的压缩包，一般选择 `amd64`架构
+2. 然后将这个压缩包上传到服务器的 `/root/`目录下，并使用 `root`用户登录服务器
+
+> 如果你的服务器 cpu 架构不是 `amd64`，自行将命令中的 `amd64`替换为其他架构
 
 ```
-wget -N https://raw.githubusercontent.com/qist/x-ui/main/install.sh && bash install.sh
+cd /root/
+rm x-ui/ /usr/local/x-ui/ /usr/bin/x-ui -rf
+tar zxvf x-ui-linux-amd64.tar.gz
+chmod +x x-ui/x-ui x-ui/bin/xray-linux-* x-ui/x-ui.sh
+cp x-ui/x-ui.sh /usr/bin/x-ui
+cp -f x-ui/x-ui.service /etc/systemd/system/
+mv x-ui/ /usr/local/
+systemctl daemon-reload
+systemctl enable x-ui
+systemctl restart x-ui
 ```
 
-#### 编译
+## 使用docker安装
+
+> 此 docker 教程与 docker 镜像由[Chasing66](https://github.com/Chasing66)提供
+
+1. 安装docker
+
+```shell
+curl -fsSL https://get.docker.com | sh
+```
+
+2. 安装x-ui
+
+```shell
+mkdir x-ui && cd x-ui
+docker run -itd --network=host \
+    -v $PWD/db/:/etc/x-ui/ \
+    -v $PWD/cert/:/root/cert/ \
+    --name x-ui --restart=unless-stopped \
+    enwaiax/x-ui:latest
+```
+
+> Build 自己的镜像
+
+```shell
+docker build -t x-ui .
+```
+
+## SSL证书申请
+
+> 此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供
+
+脚本内置SSL证书申请功能，使用该脚本申请证书，需满足以下条件:
+
+- 知晓Cloudflare 注册邮箱
+- 知晓Cloudflare Global API Key
+- 域名已通过cloudflare进行解析到当前服务器
+
+获取Cloudflare Global API Key的方法:
+    ![](media/bda84fbc2ede834deaba1c173a932223.png)
+    ![](media/d13ffd6a73f938d1037d0708e31433bf.png)
+
+使用时只需输入 `域名`, `邮箱`, `API KEY`即可，示意图如下：
+        ![](media/2022-04-04_141259.png)
+
+注意事项:
+
+- 该脚本使用DNS API进行证书申请
+- 默认使用Let'sEncrypt作为CA方
+- 证书安装目录为/root/cert目录
+- 本脚本申请证书均为泛域名证书
+
+## Tg机器人使用
+
+> 此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供
+
+X-UI支持通过Tg机器人实现每日流量通知，面板登录提醒等功能，使用Tg机器人，需要自行申请
+具体申请教程可以参考[博客链接](https://coderfan.net/how-to-use-telegram-bot-to-alarm-you-when-someone-login-into-your-vps.html)
+使用说明:在面板后台设置机器人相关参数，具体包括
+
+- Tg机器人Token
+- Tg机器人ChatId
+- Tg机器人周期运行时间，采用crontab语法  
+
+参考语法：
+- 30 * * * * * //每一分的第30s进行通知
+- @hourly      //每小时通知
+- @daily       //每天通知（凌晨零点整）
+- @every 8h    //每8小时通知  
+
+TG通知内容：
+- 节点流量使用
+- 面板登录提醒
+- 节点到期提醒
+- 流量预警提醒  
+
+更多功能规划中...
+
+## 建议系统
+
+- CentOS 7+
+- Ubuntu 16+
+- Debian 8+
+
+# 常见问题
+
+## 从 v2-ui 迁移
+
+首先在安装了 v2-ui 的服务器上安装最新版 x-ui，然后使用以下命令进行迁移，将迁移本机 v2-ui 的 `所有 inbound 账号数据`至 x-ui，`面板设置和用户名密码不会迁移`
+
+> 迁移成功后请 `关闭 v2-ui`并且 `重启 x-ui`，否则 v2-ui 的 inbound 会与 x-ui 的 inbound 会产生 `端口冲突`
 
 ```
-git clone https://github.com/qist/x-ui.git
-
-cd x-ui
-debian/ubuntu解决方案：sudo apt-get install libc6-dev
-redhat/centos解决方案：yum install glibc-static.x86_64 -y 或者 sudo yum install glibc-static
-CGO_ENABLED=1 go build -o x-ui/x-ui  -ldflags '-linkmode "external" -extldflags "-static"' main.go
-# 交叉编译
-在centos7中安装，yum install gcc-aarch64-linux-gnu
-去https://releases.linaro.org/components/toolchain/binaries/ 找 latest-7
-下载 aarch64-linux-gnu/sysroot-glibc-linaro-2.25-2019.02-aarch64-linux-gnu.tar.xz
-自己找个目录, 解压 tar Jxvf sysroot-glibc-linaro-2.25-2019.02-aarch64-linux-gnu.tar.xz
-build时，指定 sysroot 的位置。
-
-用 CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC="aarch64-linux-gnu-gcc" CGO_CFLAGS="-g -O2 --sysroot=/..../sysroot-glibc-linaro-2.25-2019.02-aarch64-linux-gnu/" CGO_LDFLAGS="-g -O2 --sysroot=/..../sysroot-glibc-linaro-2.25-2019.02-aarch64-linux-gnu/" go build -v -ldflags "-w -s" -o x-ui/x-ui main.go 编译成功。
-debian/ubuntu解决方案
-apt install gcc-aarch64-linux-gnu
-CGO_ENABLED=1 GOARCH=arm64 CC="aarch64-linux-gnu-gcc" go build -o x-ui/x-ui  -ldflags '-linkmode "external" -extldflags "-static"' main.go 
+x-ui v2-ui
 ```
---------------------------------------------------------------------------------------------------------------------------------------------------
-### nginx 代理设置
-```
-upstream x-ui {
-        least_conn;
-        server 127.0.0.1:54321 max_fails=3 fail_timeout=30s;
-        keepalive 1000;
-}
-server {
-    listen 80;
-    server_name xray.test.com;
-    location / {
-        proxy_redirect     off;
-        proxy_set_header   Host $host;
-        proxy_set_header   X-Real-IP   $remote_addr;
-        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-        proxy_ssl_session_reuse off;
-        proxy_ssl_server_name on;
-        proxy_buffering    off;
-        proxy_connect_timeout      90;
-        proxy_send_timeout         90;
-        proxy_read_timeout         90;
-        proxy_buffer_size          4k;
-        proxy_buffers              4 32k;
-        proxy_busy_buffers_size    64k;
-        proxy_http_version 1.1;
-        proxy_set_header Accept-Encoding "";
-        proxy_pass http://x-ui;
-        #proxy_pass_request_headers on;
-        proxy_set_header Connection "keep-alive";
-        proxy_store off;
-    }
- }
- # vpn代理nginx 配置参考
-https://github.com/qist/xray/tree/main/xray/nginx
-```
---------------------------------------------------------------------------------------------------------------------------------------------------
-### 关于TG通知（上游内容）
 
-使用说明:在面板后台设置机器人相关参数
+## 鸣谢
 
-Tg机器人Token
+vaxilu 的 x-ui 项目：https://github.com/vaxilu/x-ui
 
-Tg机器人ChatId
+## 赞助
 
-#### Tg机器人周期运行时间，采用crontab语法参考语法：
+爱发电：https://afdian.net/a/Misaka-blog
 
-30 * * * * * //每一分的第30s进行通知
+![afdian-MisakaNo の 小破站](https://user-images.githubusercontent.com/122191366/211533469-351009fb-9ae8-4601-992a-abbf54665b68.jpg)
 
-@hourly //每小时通知
+## 免责声明
 
-@daily //每天通知（凌晨零点整）
-
-@every 8h //每8小时通知
-
-@every 30s  //每30s通知一次
-
-#### TG通知内容：
-
-节点流量使用
-
-面板登录提醒
-
-节点到期提醒
-
-流量预警提醒
-
-#### TG机器人可输入内容：
-
-/delete port将会删除对应端口的节点
-
-/restart 将会重启xray服务，该命令不会重启x-ui面板自身
-
-/status 将会获取当前系统状态
-
-/enable port将会开启对应端口的节点
-
-/disable port将会关闭对应端口的节点
-
-/version 0.1.1.1 xray升级到1.6.0版本
-
-/help 获取帮助信息
+* 本程序仅供学习了解, 非盈利目的，请于下载后 24 小时内删除, 不得用作任何商业用途, 文字、数据及图片均有所属版权, 如转载须注明来源。
+* 使用本程序必循遵守部署免责声明。使用本程序必循遵守部署服务器所在地、所在国家和用户所在国家的法律法规, 程序作者不对使用者任何不当行为负责.
