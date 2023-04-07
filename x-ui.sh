@@ -454,7 +454,7 @@ x25519() {
     
     keys=$(/usr/local/x-ui/bin/xray-linux-${arch} x25519)
     public_key=$(echo $keys | awk -F " " '{print $6}')
-    private_key=$(echo $keys | awk -F " " '{print $6}')
+    private_key=$(echo $keys | awk -F " " '{print $3}')
     short_id=$(openssl rand -hex 8)
     green "xray Reality 的公私钥、shortId 已生成成功！"
     yellow "请将此内容保存备用，以便创建Reality 节点使用"
