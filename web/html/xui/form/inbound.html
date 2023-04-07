@@ -94,9 +94,19 @@
     {{template "form/streamSettings"}}
 </template>
 
+<!-- sockopt -->
+<template v-if="inbound.canSockopt()">
+    {{template "form/streamSOCKOPT"}}
+</template>
+
 <!-- tls settings -->
 <template v-if="inbound.canEnableTls()">
     {{template "form/tlsSettings"}}
+</template>
+
+<!-- reality settings -->
+<template v-if="inbound.canEnableReaLITy()">
+    {{template "form/realitySettings"}}
 </template>
 
 <!-- sniffing -->

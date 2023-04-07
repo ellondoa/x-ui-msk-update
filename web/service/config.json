@@ -18,71 +18,37 @@
       "tag": "api"
     }
   ],
-  "policy": {
-    "system": {
-      "statsInboundDownlink": true,
-      "statsInboundUplink": true
-    }
-  },
   "outbounds": [
     {
-      "protocol": "blackhole",
-      "settings": {},
-      "tag": "blocked"
-    },
-    {
-      "tag": "ipv4-out",
       "protocol": "freedom",
       "settings": {}
     },
     {
-      "tag": "ipv6-out",
-      "protocol": "freedom",
+      "protocol": "blackhole",
       "settings": {
-        "domainStrategy": "UseIPv6"
-      }
-    },
-    {
-      "tag": "socks5-warp",
-      "protocol": "socks",
-      "settings": {
-        "servers": [
-          {
-            "address": "127.0.0.1",
-            "port": 40000
-          }
-        ]
-      }
-    },
-    {
-      "tag": "wireguard-warp",
-      "protocol": "wireguard",
-      "settings": {
-        "secretKey": "GAl2z55U2UzNU5FG+LW3kowK+BA/WGMi1dWYwx20pWk=",
-        "address": [
-          "172.16.0.2/32",
-          "2606:4700:110:8f0a:fcdb:db2f:3b3:4d49/128"
-        ],
-        "peers": [
-          {
-            "publicKey": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
-            "allowedIPs": [
-              "0.0.0.0/0",
-              "::/0"
-            ],
-            "endpoint": "engage.cloudflareclient.com:2408"
-          }
-        ],
-        "reserved": [
-          230,
-          25,
-          169
-        ]
-      }
+        "response": {
+          "type": "http"
+        }
+      },
+      "tag": "blocked"
     }
   ],
+  "policy": {
+    "system": {
+      "statsInboundDownlink": true,
+      "statsInboundUplink": true
+    },
+    "levels": {
+      "0": {
+        "handshake": 2,
+        "connIdle": 120,
+        "uplinkOnly": 1,
+        "downlinkOnly": 1
+      }
+    }
+  },
   "routing": {
-    "domainStrategy": "AsIs",
+    "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
         "inboundTag": [
@@ -92,44 +58,19 @@
         "type": "field"
       },
       {
+        "type": "field",
+        "domain": [
+          "geosite:category-ads-all",
+          "geosite:geolocation-cn"
+        ],
+        "outboundTag": "blocked"
+      },
+      {
+        "type": "field",
         "ip": [
-          "geoip:private"
+          "geoip:cn"
         ],
-        "outboundTag": "blocked",
-        "type": "field"
-      },
-      {
-        "outboundTag": "blocked",
-        "protocol": [
-          "bittorrent"
-        ],
-        "type": "field"
-      },
-      {
-        "type": "field",
-        "outboundTag": "socks5-warp",
-        "domain": [
-          "ip.gs"
-        ]
-      },
-      {
-        "type": "field",
-        "outboundTag": "wireguard-warp",
-        "domain": [
-          "chat.openai.com"
-        ]
-      },
-      {
-        "type": "field",
-        "outboundTag": "ipv6-out",
-        "domain": [
-          "ipget.net"
-        ]
-      },
-      {
-        "type": "field",
-        "outboundTag": "ipv4-out",
-        "network": "udp,tcp"
+        "outboundTag": "blocked"
       }
     ]
   },
