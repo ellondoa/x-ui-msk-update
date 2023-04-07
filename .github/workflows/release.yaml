@@ -8,6 +8,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    container: docker.io/ubuntu:18.04
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
