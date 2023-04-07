@@ -37,7 +37,7 @@ jobs:
       - name: build linux amd64 version
         run: |
           apt-get update
-          apt install -y sudo curl wget unzip ca-certificates libc6-dev
+          apt install -y sudo curl wget unzip ca-certificates build-essential
           CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
