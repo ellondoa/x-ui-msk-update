@@ -457,7 +457,7 @@ x25519() {
     private_key=$(echo $keys | awk -F " " '{print $3}')
     short_id=$(openssl rand -hex 8)
     green "xray Reality 的公私钥、shortId 已生成成功！"
-    yellow "请将此内容保存备用，以便创建Reality 节点使用"
+    yellow "请将此内容保存备用，以便创建 Reality 节点使用"
     red "公钥：$public_key"
     red "私钥：$private_key"
     red "shortId：$short_id"
