@@ -440,7 +440,7 @@ x25519() {
         arch="amd64"
     fi
     
-    /usr/local/xray-ui/bin/xray-linux-${arch} x25519
+    /usr/local/x-ui/bin/xray-linux-${arch} x25519
     echo ""
     before_show_menu
 }
