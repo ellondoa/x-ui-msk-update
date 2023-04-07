@@ -7,7 +7,7 @@
 - 系统状态监控
 - 支持多用户多协议，网页可视化操作
 - 支持的协议：vmess、vless、trojan、shadowsocks、dokodemo-door、socks、http
-- 支持 vless reality
+- 支持 vless / trojan reality
 - 支持配置更多传输配置
 - 流量统计，限制流量，限制到期时间
 - 可自定义 xray 配置模板
@@ -15,7 +15,7 @@
 - 支持一键SSL证书申请且自动续签
 - 更多高级配置项，详见面板
 
-# 安装&升级
+# 安装 & 升级
 
 ```
 bash <(wget -qO- https://gitlab.com/Misaka-blog/x-ui-msk/-/raw/main/install.sh)
