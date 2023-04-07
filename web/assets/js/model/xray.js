@@ -641,7 +641,7 @@ class Inbound extends XrayCommonClass {
             this.stream.security = 'tls';
         } else {
             if (this.protocol === Protocols.TROJAN) {
-                this.xtls = true;
+                this.stream.security = 'tls';
             } else {
                 this.stream.security = 'none';
             }
