@@ -37,8 +37,8 @@ jobs:
       - name: build linux amd64 version
         run: |
           apt-get update
-          apt install -y sudo curl wget unzip ca-certificates
-          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
+          apt install -y sudo curl wget unzip ca-certificates gcc-x86-64-linux-gnu
+          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC=gcc-x86-64-linux-gnu go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
           cp x-ui.service x-ui/x-ui.service
