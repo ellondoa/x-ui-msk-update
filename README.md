@@ -7,6 +7,7 @@
 - 系统状态监控
 - 支持多用户多协议，网页可视化操作
 - 支持的协议：vmess、vless、trojan、shadowsocks、dokodemo-door、socks、http
+- 支持 vless reality
 - 支持配置更多传输配置
 - 流量统计，限制流量，限制到期时间
 - 可自定义 xray 配置模板
@@ -91,7 +92,7 @@ docker build -t x-ui .
 - 证书安装目录为/root/cert目录
 - 本脚本申请证书均为泛域名证书
 
-## Tg机器人使用
+## TG 机器人使用
 
 > 此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供
 
@@ -138,6 +139,8 @@ x-ui v2-ui
 ## 鸣谢
 
 vaxilu 的 x-ui 项目：https://github.com/vaxilu/x-ui
+
+qist 的 xray-ui 项目：https://github.com/qist/xray-ui
 
 ## 赞助
 
