@@ -7,7 +7,7 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
@@ -21,12 +21,10 @@ jobs:
           release_name: ${{ github.ref }}
           draft: false
           prerelease: false
-
   linuxamd64build:
     name: build x-ui amd64 version
     needs: release
-    runs-on: ubuntu-latest
-    container: docker.io/ubuntu:18.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3.5.0
       - name: Set up Go
@@ -64,12 +62,10 @@ jobs:
           asset_path: x-ui-linux-amd64.tar.gz
           asset_name: x-ui-linux-amd64.tar.gz
           asset_content_type: application/gzip
-
   linuxarm64build:
     name: build x-ui arm64 version
     needs: release
-    runs-on: ubuntu-latest
-    container: docker.io/ubuntu:18.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3.5.0
       - name: Set up Go
@@ -109,12 +105,10 @@ jobs:
           asset_path: x-ui-linux-arm64.tar.gz
           asset_name: x-ui-linux-arm64.tar.gz
           asset_content_type: application/gzip
-
   linuxs390xbuild:
     name: build x-ui s390x version
     needs: release
-    runs-on: ubuntu-latest
-    container: docker.io/ubuntu:18.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3.5.0
       - name: Set up Go
