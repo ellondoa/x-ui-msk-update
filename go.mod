@@ -15,7 +15,7 @@ require (
 	github.com/xtls/xray-core v1.8.0
 	go.uber.org/atomic v1.10.0
 	golang.org/x/text v0.8.0
-	google.golang.org/grpc v1.53.0
+	google.golang.org/grpc v1.55.0
 	gorm.io/driver/sqlite v1.3.5
 	gorm.io/gorm v1.23.7
 )
@@ -49,6 +49,6 @@ require (
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
-	google.golang.org/protobuf v1.29.1 // indirect
+	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
